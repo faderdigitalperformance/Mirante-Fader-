@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Mídia Paga — Mirante Incorporações · Arboreto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F2E9; --surface: #FFFFFF; --surface2: #EFE6D6; --border: rgba(51,64,43,0.12);
+    --text: #262A1F; --muted: #6E6A5A; --muted2: #A39C88;
+    --forest: #33402B; --forest-light: #55684A; --forest-pale: #E4E9DC;
+    --terracotta: #BE6A3E; --terracotta-light: #E2A57C; --terracotta-dark: #8F4E2C;
+    --sand: #D7CDC6;
+    --meta: #4E6E7E; --google: #A0793F;
+    --hero-bg: #1F2919; --hero-text: #F3EFE3; --hero-muted: #9FAB8F;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 0 0 60px; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .serif { font-family: 'Fraunces', serif; }
+  .wrap { padding: 0 28px; }
+
+  .hero-header {
+    background: radial-gradient(140% 160% at 8% 0%, #2C3924 0%, #1F2919 55%, #141B0F 100%);
+    border-bottom: 3px solid var(--terracotta);
+    padding: 30px 28px 24px; margin-bottom: 0; position: relative; overflow: hidden;
+  }
+  .hero-header::after {
+    content: ""; position: absolute; top: -40%; right: -6%; width: 380px; height: 380px;
+    border: 1px solid rgba(190,106,62,0.18); border-radius: 50%;
+  }
+  .hero-header::before {
+    content: ""; position: absolute; top: -10%; right: 8%; width: 220px; height: 220px;
+    border: 1px solid rgba(243,239,227,0.08); border-radius: 50%;
+  }
+  .brand-logo { height: 46px; width: auto; display: block; margin-bottom: 22px; position: relative; z-index: 1; }
+  .hero-top { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; position: relative; z-index: 1; }
+  h1 { font-family: 'Fraunces', serif; font-size: 27px; font-weight: 400; font-style: italic; margin: 0; letter-spacing: 0; color: var(--hero-text); }
+  h1 b { font-weight: 600; font-style: normal; }
+  .subtitle { font-size: 12.5px; color: var(--hero-muted); margin-top: 8px; font-weight: 400; letter-spacing: 0.02em; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 8px 16px; border-radius: 3px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    border: 1px solid rgba(243,239,227,0.3); background: transparent; color: var(--hero-muted); cursor: pointer; transition: all 0.15s ease;
+  }
+  .tab-btn:hover { border-color: rgba(243,239,227,0.55); color: var(--hero-text); }
+  .tab-btn.active { background: var(--terracotta); color: #1F2919; border-color: var(--terracotta); }
+
+  .filterbar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: rgba(243,239,227,0.06); border: 1px solid rgba(243,239,227,0.16); border-radius: 4px;
+    padding: 12px 16px; position: relative; z-index: 1;
+  }
+  .filterbar .flabel { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hero-muted); margin-right: 4px; }
+  .filterbar input[type=date] { background: #141B0F; border: 1px solid rgba(243,239,227,0.22); border-radius: 3px; color: var(--hero-text); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 8px; color-scheme: dark; }
+  .preset-btn { padding: 6px 12px; border-radius: 3px; font-size: 11px; letter-spacing: 0.03em; font-family: 'Inter', sans-serif; font-weight: 600; border: 1px solid rgba(243,239,227,0.22); background: transparent; color: var(--hero-muted); cursor: pointer; }
+  .preset-btn.active { background: var(--terracotta); border-color: var(--terracotta); color: #1F2919; }
+  .filter-range-label { font-size: 11.5px; color: var(--hero-muted); margin-left: auto; font-family: 'JetBrains Mono', monospace; }
+
+  .section-nav {
+    display: flex; gap: 6px; background: var(--forest-pale); padding: 14px 28px;
+    border-bottom: 1px solid var(--border); margin-bottom: 30px;
+  }
+  .section-nav-btn {
+    padding: 9px 20px; border-radius: 3px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    border: 1px solid transparent; background: transparent; color: var(--forest-light); cursor: pointer; transition: all 0.15s ease;
+  }
+  .section-nav-btn:hover { background: rgba(51,64,43,0.08); }
+  .section-nav-btn.active { background: var(--forest); color: var(--forest-pale); }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; margin-bottom: 26px; background: var(--terracotta-dark); border-radius: 6px; overflow: hidden; }
+  .kpi-card { background: var(--terracotta); padding: 22px 22px 20px; position: relative; }
+  .kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(31,41,25,0.65); margin-bottom: 10px; }
+  .kpi-value { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 500; color: #1F2919; line-height: 1; }
+  .kpi-sub { font-size: 11.5px; color: rgba(31,41,25,0.65); margin-top: 8px; font-weight: 500; }
+
+  .reach-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .reach-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--forest-light); border-radius: 4px; padding: 16px 18px; }
+  .reach-label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); margin-bottom: 8px; }
+  .reach-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; color: var(--text); }
+  .reach-sub { font-size: 10.5px; color: var(--muted2); margin-top: 4px; }
+
+  .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 18px 20px; }
+  .brand-section { margin-bottom: 36px; }
+  .brand-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .brand-title h2 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; margin: 0; letter-spacing: 0.005em; color: var(--forest); }
+  .platform-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+  .platform-card { flex: 1; min-width: 200px; background: var(--surface); border-radius: 4px; padding: 16px 18px; border: 1px solid var(--border); border-top: 3px solid var(--forest-light); }
+  .platform-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .platform-head .dot { width: 7px; height: 7px; }
+  .platform-head span.label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+  .platform-spend { font-family: 'Fraunces', serif; font-size: 23px; font-weight: 500; }
+  .platform-spend-label { font-size: 11px; color: var(--muted2); margin-top: 2px; }
+  .platform-metrics { display: flex; flex-wrap: wrap; gap: 10px 0; justify-content: space-between; margin-top: 14px; font-size: 12px; }
+  .platform-metrics > div { min-width: 62px; }
+  .platform-metrics .m-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+  .platform-metrics .m-label { color: var(--muted2); font-size: 10px; }
+
+  .section-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 400; font-style: italic; margin-bottom: 5px; letter-spacing: 0; color: var(--forest); }
+  .section-title b { font-weight: 600; font-style: normal; }
+  .section-sub { font-size: 12px; color: var(--muted2); margin-bottom: 18px; }
+  .subtabs { display: flex; gap: 22px; margin-bottom: 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .subtab-btn { padding: 8px 2px 12px; background: transparent; border: none; border-bottom: 2px solid transparent; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--muted2); cursor: pointer; }
+  .subtab-btn.active { color: var(--forest); border-bottom-color: var(--terracotta); }
+
+  .camp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 10px; }
+  .camp-header { display: flex; align-items: center; gap: 10px; padding: 13px 16px; cursor: pointer; user-select: none; }
+  .camp-header:hover { background: var(--forest-pale); }
+  .camp-chevron { width: 9px; height: 9px; border-right: 1.5px solid var(--forest-light); border-bottom: 1.5px solid var(--forest-light); transform: rotate(-45deg); transition: transform 0.15s ease; flex-shrink: 0; margin-left: 2px; }
+  .camp-card.open .camp-chevron { transform: rotate(45deg); }
+  .camp-name { flex: 1; min-width: 140px; font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .camp-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted2); }
+  .camp-metrics { display: flex; gap: 18px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; flex-wrap: wrap; }
+  .camp-metrics > div { text-align: right; min-width: 52px; }
+  .camp-metrics .cm-val { color: var(--text); font-weight: 600; }
+  .camp-metrics .cm-label { color: var(--muted2); font-size: 9px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .camp-subrows { display: none; border-top: 1px solid var(--border); }
+  .camp-card.open .camp-subrows { display: block; }
+  .camp-subrow { display: flex; align-items: center; gap: 10px; padding: 10px 16px 10px 30px; border-top: 1px solid rgba(51,64,43,0.06); }
+  .camp-subrow:first-child { border-top: none; }
+  .camp-subrow-name { flex: 1; min-width: 120px; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .camp-subrow .camp-metrics { font-size: 11px; }
+
+  .creatives-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .creative-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: transform 0.15s ease; }
+  .creative-card:hover { transform: translateY(-3px); }
+  .creative-img-wrap { position: relative; width: 100%; padding-top: 62%; background: var(--forest-pale); }
+  .creative-img-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+  .play-badge {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 38px; height: 38px; border-radius: 50%; background: rgba(31,41,25,0.6);
+    border: 1.5px solid rgba(243,239,227,0.75); display: flex; align-items: center; justify-content: center;
+  }
+  .play-badge svg { width: 13px; height: 13px; margin-left: 2px; }
+  .badge { position: absolute; top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px; background: rgba(31,41,25,0.9); letter-spacing: 0.04em; color: #F3EFE3; }
+  .badge.brand { left: 8px; } .badge.rank { right: 8px; }
+  .origin-link {
+    position: absolute; bottom: 8px; right: 8px; background: rgba(31,41,25,0.88); color: #F3EFE3;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 3px 8px; border-radius: 3px;
+    text-decoration: none; letter-spacing: 0.02em; border: 1px solid rgba(243,239,227,0.2);
+  }
+  .origin-link:hover { border-color: var(--terracotta-light); color: var(--terracotta-light); }
+  .creative-body { padding: 12px 14px 14px; }
+  .creative-name { font-size: 12.5px; color: var(--text); font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .creative-camp { font-size: 10.5px; color: var(--muted2); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .creative-stats { display: flex; flex-wrap: wrap; gap: 6px 0; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .creative-stats > div { min-width: 46px; }
+  .creative-stats .cs-val { font-weight: 600; }
+  .creative-stats .cs-label { color: var(--muted2); font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .ga-creative-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .ga-creative-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .ga-headline { font-family: 'Fraunces', serif; font-size: 15px; color: var(--forest); font-weight: 600; line-height: 1.4; }
+  .ga-desc { font-size: 11.5px; color: var(--muted); line-height: 1.55; font-weight: 400; }
+  .ga-meta-row { font-size: 10.5px; color: var(--muted2); }
+  table.ga-table { width: 100%; border-collapse: collapse; }
+  table.ga-table th, table.ga-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+  table.ga-table th { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); font-weight: 500; }
+  table.ga-table td { font-size: 13px; color: #3D4534; font-weight: 400; }
+  .table-card { padding: 0; overflow-x: auto; }
+  .footer-note { margin-top: 32px; font-size: 11px; color: var(--muted2); text-align: center; letter-spacing: 0.02em; }
+  .empty-msg { color: var(--muted2); font-size: 12.5px; padding: 20px; text-align: center; }
+</style>
+</head>
+
+<body>
+
+<div class="hero-header">
+  <img class="brand-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAAAmCAYAAAAr1RLQAAAOAklEQVR4AeycCdhVRRnHz0UtTVNbNFtcStPMpccVM/cyFMssU8mV3HOpVMJCChJTNASVwAUXEFEp08dQ0EwlFTHKEDLTNpdyDeqxolyQr9/vcOYw3+Hecxe+j8XufeZ/55133nnPnJl3zsyZ5fTo6Og4BUwF30q66IeuIeAecEQ1lfA3BneDwdXiizzkVgUHgLPBLcD8xpgM7z3FdCFM3BlgfoaTAr8Zn7R9gdc8vJl0sSzpTwDq2DHmS8O/GBgX415414B+YGflAjqSpDKhb+8LJ/Tdd2oZruvbe8r4w3u9N6nxQ+/qoA+4EsTXlr4d3llgqxrJkx5EfB/sDs5F8DIgj2DzjrSrgHGkHAj2BINANXcezL3AIOQ3xa/piN+NyD+CW8C3wQHA/MbYF95pYDFH+i/DHAZWyjAK3pHQzTrz7DWvJb15aCo9ad5OglFAHSPxc0fcBwl8FRgXYw94fYF1NA25SUA9yQ1H9foo/NOTpIJ8bVSSZJ8eK/c4JanyQ5dlY9neQPQxAF1JjN7wzgGzkZ0I3gfdyWksq0acE6BtzW/Db8qhfC0S3APiypEHazH3rohT1jq8gbuQfT8oc48TqeHiLXLkaWVC3wNFNzSLK/LLwiHP1EliYVq5ZfLFOCteI5ZffFo+BXMGqOc+g4CGtPb8BR2meZpwuetI3qgklftjIe69AkbDuxqsBxpxByM0nXQaO+RCpwEtpBb994JUsHiTsKs7lG5AjAWwC36XOHRujaKbwFuAbgp/HwdrVRb/bQ7rd8QV3VEwgoFa2LY2WIk8W7Z0KzBPPt4/1kriYhry3gF6gk4OOetnffwvgOeAzu7kJ0eO/+m8w8ZO3ghUSjFu8sqHjp18R9L555PwKxHrH9AXgs1CBqDfCr4EYuOznjXgDeGnzgymROHPynuYSvQxWYjqHERmOzgPg9KuiPhm3XASrAZ0l3JjvcFD4J8y6oF8eW92eUH0Agi7MrzUDcxk0kALfz6lHcd19X3nWeFeNay/4tt9WxdPZpG7kvcvZnRTHunOJEFsPBMIb8g1+oHfQ6cO+jVwI3AIsQ/MuUBn45uCHp+o6RhIpniNP/rUZAG+zm7jFwg6ljG8GIjzkfoAEe8Gutf5sy/HS11H+t/kH3o3Jsknge4Z/s4Azbo+JAgt5W/QV4JrgDReYtyhEi3gL1kau7W7yO9iY4Msvss8KvJllDnEwEvdcel/E3/k80OIDwHBXY7ew8G/AqOaT/yd8K2PILc54bRx2kqhFzoER0A57vg3vm4N/iygeFwDK0nIjJV6K4EwhvIx6MB4PLzgKoFo0t8pkp9Mvv4bheuS5M3rDo4ER6DDFmUjcUAaor6TyYZwmR83hk8hGFqkj3XfljQm2N3nuAfHgxqSF9nVvyYxFPlVgM6G3/AbKdeeRaJjQXCnUXbrxQZkoScIam09kXoW6Bz4jUM4tVx8X/2vIMLuIKT30bc9ac0UUUvs4sH3b1vQ5lvSh7N0Nob4redS+PLwEmU+L9EMuE/v1xb5nyyd3Zjdmd1axuo27zeZ5tWoi3dmdF0PWYcDn4sEv8Z9hN4mYtcmkf8hsb8EOl9QDgwGICNvYQg+BmNbEIQhE8cM10HcBuLH588I70iaP+MXXVMZjBLH+Zof8RslnUYIsqPIWzAYG4j0xSES/2zQiEsbmIJUBiortsj9CPtUw0scUDuwtmANdxdejRQ7mI+CpeTexAb5xyqVyq8Jt+KuiBLtG1dUXkAKcIGX8B1A3Ywf3GEQzrngpW4M//sgGx6rBDu5WH+niO4KULkO+DR+L2Hl+nYhHUMDCt3iFqSJ7ymWK6W576kIHAhCQ/HV/kb0LfX7Jg/1nIPfILMOeXSisGmgIB6HbVJ6oxTQK8ACKrbSN1DkI/B44qUJLjcuHdxlubma/IVBc8ZKfArJuypZ9IufWIu4DVDo94nsJFyQtrxi3YG/rP13RBlYBzqeMGyG3p60wa0fG1DehYXY4FNIg6C9iK98Fs528C6BV8+FlllPrkviaVXmMUz5e20HjbV0O7Mcuseds7S1ZEv5lMVYBL4JgnPZo9oEZohfFr5dd1dfd1JsQJ26sOKVKKT7gK98x+Lb/xdFqoVj/dXiu5oXP0kmkk8nD6tegzgn5pzCD/FnBaIVH33nk86uES91AzDKE1Nq+fh7McrGTGinZ5YEPkT6LO0KJt/d46gsxz2+XocLnBuIEt83y/Dk3TvTUSJeHoURfR2J2ChHo9PZXNjL3P0qysGW0DPJ79QlQDoIX/oGRM67ycXzPs4dPVrvOhTeH5CZBIKzqw50q747EBwXmd6n+niM6NMGliW4V2exwxSAc0ENzwGV5ftNYUBUkOtDn41u9H54ezQC0sRzV/uTxtYJuzVHRflS4UD6wUyD82hOuLqOl7GS8NQL4aXlXxRdaDD3uk0Urksi3xOcDmwYqfybwoC4k3jsQzBxgHwvRCNwjQzR3NUaC+WVjpHkdJ4qIoh3+sDpBMcaxjhb7wuItMgrwMBShEs5j2TXc07oToxhsyxc00NmJeDa5EMIOS2SP71WeAPixpxNbmlhkcKo5g7OdBbj8konPqeLQiGMEblu5ORdmGB1dTtELxOfPGn4ztI7x2cefJ2fyf30B2vKKAK+a4b3wY/3W7nEBSvptJiaMlbAvwHkOTQElz2+S7gVmJakaZnEr+TyWgIV5nqZk4u+8bWko6sTkSffTDXsv2e6XeLwDfJFjMUlK7u2gNuRcZwYpkYIJi5n5F1hKHgjVjhww24piLeYnkkBDW4F3HxsNEege3V4sbP1pmH053TKKPlD1pV73w5dbA6SDacPCbrSJ0+z0fcJoDHhpc5u1kVzXyQCXFh3wK2AeXZo0If0+XKKBhTmBxqd21FZGdyv83wmUEuna22KuP3jCYkC3GEYWGVvUw5Y1aGsr6W2GOlWYNowPrCA1B3rCRvWQt7juFKaAjetY6KwfBKuU5quRuSfMr71Niejm/bIk2XsIvA3SOxTBq+qc7LVseS2pBkANKRcUANy/ODWDHci5hGtElzAGeAdSH88sL/FW8x5PffjboX8C8VYeC7Quj61O3T2llSUSlyScDV8iyRJvJatHLI1x3UsGHWoy3y9UtBknBODrg8WouoH0e+OTTeFuSWi1X1IXsg9WydD7IBOKxeyNUd6t7gMw9eQ3P/l4rD7pz1g4dPIHaZrEL8XqGr0PYh4AAwHoU9sLTdRKnQ9C8aAqtPn8M34WPxqT59UE3F3AAdvabjWHzJPAq+1xPlHz1ygLvcbd7ok/DnADViOazrFNRog/VPgKhCeRI0mzeVIOw+MBnaNOX9JCfQ9B5w/c/fCUOjxYBrwaVxTvU+gmpHtiHYJ1CuBtgHVK6F2fGkJtA2otHjakfVKoG1A9UqoHV9aAm0DKi2edmS9Evh/MKB6ZdBQPBOL8WJoQ2lWBCHua1vgzPMO+E5TNJXttgE1Xlx+3CHMyjaeavmX9EzbtWSzpQbSNiBKrkH3BHMir9NKdwG21nPwPQ/mseNUBWE36LvC7ekMz8gF/iDi3MA+HD81QvztwU7AOL9msi70fuAg4BPBs+hpev/gHQvU4ccd0oVPwhuBPcGpwHPuntfbEPo2cD3YFBxkegEdvsTyA+gPyAOeKnaF3fvoNLeEjF/m8JonQ6e2gu89+oWUMdC7p0yUtF39Euifibgk4eKje8I9oZDuu6YwNyHeLRsuDbjdId1XBN+PGDyO8bmo6r4gWzuiibO87pv+MQFlPKB4PbR6fo5/CGlPxdcoXAn39K9G6bU1Dlf3vYb5cKOYlb028pcD8+WMt8eY/T6AOvrBd/3LzW0eld4K/erU8NxJ6QKruzLTc3LE+VWOeaTx/Juz1GHDnnvinUl3e0fPtgFRQi04z+q/hFF4wHAOhe2JByvNxdzZ8J8Gl8D3tOqW0BO9Br6G4ZcxPBpcgeds+6Pww9qhZ//PI+zakzsbXVZBLF2qOR/+AuCuAZcVNAR1TIfn1lR1+NS6mbArAS7zaFyhjj05cihxrgLcje/HKlyIvgna/Lqm6F4ot3a4sHo0F9YgPeXi/ibDsBK3grgVeDXSXRCUG9FG4yXgel+QdtHVw4QaiwvJga8vz31B0gGeoVuXgGUvDZk6jSHvQqgcDcAnhzsaCVZcq0sF+TOdOkwTX9OTqvHykXF5OpTkNDp07gdSRlp4TRuDuxxco/TcW4DfGlDGp48NwW53hDchs40lLwE/RRNaqRXvJn83k32EJ5HdkjwNyi4h3uAermzlOgay1StrdzODStdA56LDI0vyfTocQqJq64R+isWvjYV69SCoehFPZqFDnepYE9o8aRzHQNsAlNE4HuSanpvTcJ+HVmY6kRsg59FtF1ldM3Phdc9wIeLbrlgChbB7aGS5jUJIC7dFvEpBTybgpiy/5uW44gR4rpY7OL2VwrcibLnHwHdsYVdgt0Oy3Lll1C/F+YEKuyNX3Y30ZMcwdGg0bpO9CB1uwXA7h08KZdydMA3C4+jm4TJoB9vhm0h2hyPR4Qca/D6AOw6k7S4fge8ebo3D8RZJE43UU7bm+0cw7LJ9QvnWNgN5t7+MahsQJdOIo8KsUCtpJHS+xQT6OJB2A/gDwdbgaOCYSPlZ0FuAPYDjIY1Ivqvd8YkQW/zLyJwEjgCe/E23lEA/A9y+sRu+H9PyGwXq8GnhRy7yWyB+CPA6J+L3Bw6QlTWPzvO8AO8w4EBavmMr5XeG1wvYPcp34L8NYfO9P75bbOR7j54J2w/emLYB5UW/zAkHqqI7M+L4KH1r7KqL/A8AAP//hvYwywAAAAZJREFUAwDwb6qs+AdKdAAAAABJRU5ErkJggg==" alt="Mirante Incorporações" />
+  <div class="hero-top">
+    <div></div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+  <div class="filterbar">
+    <span class="flabel">Período</span>
+    <button class="preset-btn" data-preset="7">7 dias</button>
+    <button class="preset-btn" data-preset="14">14 dias</button>
+    <button class="preset-btn" data-preset="30">30 dias</button>
+    <button class="preset-btn active" data-preset="all">Desde 12/08</button>
+    <span class="flabel" style="margin-left:8px">De</span>
+    <input type="date" id="dateFrom">
+    <span class="flabel">até</span>
+    <input type="date" id="dateTo">
+    <span class="filter-range-label" id="rangeInfo"></span>
+  </div>
+</div>
+
+<div class="section-nav">
+  <button class="section-nav-btn" data-section="geral">Análise Geral</button>
+  <button class="section-nav-btn active" data-section="criativos">Criativos</button>
+</div>
+
+<div class="wrap">
+
+<div id="sectionGeral" style="display:none">
+  <div class="subtabs">
+    <button class="subtab-btn geral-media-btn active" data-media="todas">Todas as mídias</button>
+    <button class="subtab-btn geral-media-btn" data-media="meta">Meta Ads</button>
+    <button class="subtab-btn geral-media-btn" data-media="google">Google Ads</button>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="section-title" id="reachTitle">Alcance, <b>impressões</b> e engajamento</div>
+  <div class="section-sub">Meta Ads · período selecionado</div>
+  <div class="reach-grid" id="reachGrid"></div>
+
+  <div id="brandSections"></div>
+</div>
+
+<div id="sectionCriativos">
+  <div class="section-title">Criativos que mais <b>performam</b></div>
+  <div class="section-sub" id="creativesSub"></div>
+  <div class="subtabs">
+    <button class="subtab-btn active" data-platform="meta">Meta Ads</button>
+    <button class="subtab-btn" data-platform="google">Google Ads</button>
+  </div>
+  <div id="creativesContainer"></div>
+</div>
+
+<div class="footer-note" id="footerNote"></div>
+</div>
+
+<script>
+const FB_ADS = {"120250038466560593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "A- [IG] [AUTO] [F] Interesses em imóveis & comportamentos de luxo", "ad_name": "A01 - [IMAGEM] - Algumas vistas são passageiras", "thumb": "https://scontent-fra5-2.xx.fbcdn.net/v/t45.1600-4/773360777_122119743729074647_3820956461382806519_n.jpg", "link": "https://fb.me/2ccEoAz95w9uDsT", "is_video": false}, "120250039265000593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "B - [IG] [AUTO] [F] Médicos, empresários & intersses em imóveis, apartamento", "ad_name": "B01 - [IMAGEM] - Algumas vistas são passageiras", "thumb": "https://scontent-fra5-2.xx.fbcdn.net/v/t45.1600-4/773360777_122119743729074647_3820956461382806519_n.jpg", "link": "https://fb.me/2aFF63Wy5bsK1lE", "is_video": false}, "120250039448030593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "A- [IG] [AUTO] [F] Interesses em imóveis & comportamentos de luxo", "ad_name": "A04 -[IMAGEM] - A poucos passos", "thumb": "https://scontent-fra3-1.xx.fbcdn.net/v/t45.1600-4/629343762_26105892832379833_1804610652300252005_n.jpg", "link": "https://fb.me/2IsD6lhflLfgbOj", "is_video": false}, "120250039448040593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "A- [IG] [AUTO] [F] Interesses em imóveis & comportamentos de luxo", "ad_name": "A03 - [VÍDEO] Nara 2", "thumb": "https://scontent-fra3-2.xx.fbcdn.net/v/t15.5256-10/739044797_4549879275335921_8727325703448191718_n.jpg", "link": "https://fb.me/BZLPNZUL7wBHRdS", "is_video": true}, "120250039448050593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "A- [IG] [AUTO] [F] Interesses em imóveis & comportamentos de luxo", "ad_name": "A02- [VÍDEO] - Nara", "thumb": "https://scontent-fra5-2.xx.fbcdn.net/v/t15.5256-10/698919573_1972629850039290_6407360262490479417_n.jpg", "link": "https://fb.me/2bAwenKaAGVdTz5", "is_video": true}, "120250039526540593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "B - [IG] [AUTO] [F] Médicos, empresários & intersses em imóveis, apartamento", "ad_name": "B02- [VÍDEO] - Nara", "thumb": "https://scontent-fra5-2.xx.fbcdn.net/v/t15.5256-10/698919573_1972629850039290_6407360262490479417_n.jpg", "link": "https://fb.me/2a1byQvNOaZS7Jt", "is_video": true}, "120250039526560593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "B - [IG] [AUTO] [F] Médicos, empresários & intersses em imóveis, apartamento", "ad_name": "B04 -[IMAGEM] - A poucos passos", "thumb": "https://scontent-fra3-1.xx.fbcdn.net/v/t45.1600-4/629343762_26105892832379833_1804610652300252005_n.jpg", "link": "https://fb.me/1Q0cDiO9FCRxY7u", "is_video": false}, "120250039567510593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "B - [IG] [AUTO] [F] Médicos, empresários & intersses em imóveis, apartamento", "ad_name": "B03 - [VÍDEO] Nara 2", "thumb": "https://scontent-fra3-2.xx.fbcdn.net/v/t15.5256-10/739044797_4549879275335921_8727325703448191718_n.jpg", "link": "https://fb.me/2jCULUA0JzQ1X4I", "is_video": true}, "120250039366260593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "C - [IG] [AUTO] [F] Remarketing site + Lokaalike", "ad_name": "C01 - [IMAGEM] - Algumas vistas são passageiras", "thumb": "https://scontent-fra5-2.xx.fbcdn.net/v/t45.1600-4/773360777_122119743729074647_3820956461382806519_n.jpg", "link": "https://fb.me/2mcprcpcMlyRcF2", "is_video": false}, "120250039588390593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "C - [IG] [AUTO] [F] Remarketing site + Lokaalike", "ad_name": "C02- [VÍDEO] - Nara", "thumb": "https://scontent-fra5-2.xx.fbcdn.net/v/t15.5256-10/698919573_1972629850039290_6407360262490479417_n.jpg", "link": "https://fb.me/1VTkxPIqqmBsfEX", "is_video": true}, "120250039555970593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "C - [IG] [AUTO] [F] Remarketing site + Lokaalike", "ad_name": "C04 -[IMAGEM] - A poucos passos", "thumb": "https://scontent-fra3-1.xx.fbcdn.net/v/t45.1600-4/629343762_26105892832379833_1804610652300252005_n.jpg", "link": "https://fb.me/1Vfr1Whakcl9dXW", "is_video": false}, "120250039555980593": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] [LEADS-FORMS] - Campanha de interesses, lookalike e remarketing", "adset": "C - [IG] [AUTO] [F] Remarketing site + Lokaalike", "ad_name": "C03 - [VÍDEO] Nara 2", "thumb": "https://scontent-fra3-2.xx.fbcdn.net/v/t15.5256-10/739044797_4549879275335921_8727325703448191718_n.jpg", "link": "https://fb.me/2gO6PFw5ve6ReIh", "is_video": true}};
+const FB_DAILY = [{"ad_id": "120250038466560593", "date": "2026-08-12", "spend": 17.36, "impr": 480.0, "clicks": 6.0, "leads": 1.0, "reach": 453.0, "eng": 9.0, "reactions": 2.0, "comments": 0.0, "shares": 0.0, "linkclicks": 5.0}, {"ad_id": "120250039265000593", "date": "2026-08-12", "spend": 18.02, "impr": 480.0, "clicks": 8.0, "leads": 0.0, "reach": 465.0, "eng": 10.0, "reactions": 3.0, "comments": 0.0, "shares": 0.0, "linkclicks": 5.0}, {"ad_id": "120250039448030593", "date": "2026-08-12", "spend": 0.66, "impr": 36.0, "clicks": 0.0, "leads": 0.0, "reach": 35.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039448040593", "date": "2026-08-12", "spend": 3.9, "impr": 51.0, "clicks": 1.0, "leads": 0.0, "reach": 50.0, "eng": 23.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 1.0}, {"ad_id": "120250039448050593", "date": "2026-08-12", "spend": 5.85, "impr": 49.0, "clicks": 1.0, "leads": 0.0, "reach": 49.0, "eng": 13.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 2.0}, {"ad_id": "120250039526540593", "date": "2026-08-12", "spend": 4.01, "impr": 35.0, "clicks": 0.0, "leads": 0.0, "reach": 34.0, "eng": 9.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039526560593", "date": "2026-08-12", "spend": 1.1, "impr": 36.0, "clicks": 1.0, "leads": 0.0, "reach": 36.0, "eng": 1.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 1.0}, {"ad_id": "120250039567510593", "date": "2026-08-12", "spend": 2.9, "impr": 43.0, "clicks": 3.0, "leads": 1.0, "reach": 43.0, "eng": 26.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 2.0}, {"ad_id": "120250038466560593", "date": "2026-08-13", "spend": 71.92, "impr": 1637.0, "clicks": 20.0, "leads": 1.0, "reach": 1326.0, "eng": 20.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 16.0}, {"ad_id": "120250039265000593", "date": "2026-08-13", "spend": 86.37, "impr": 2359.0, "clicks": 27.0, "leads": 0.0, "reach": 2001.0, "eng": 28.0, "reactions": 7.0, "comments": 0.0, "shares": 0.0, "linkclicks": 17.0}, {"ad_id": "120250039366260593", "date": "2026-08-13", "spend": 26.01, "impr": 1355.0, "clicks": 8.0, "leads": 0.0, "reach": 1114.0, "eng": 8.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 6.0}, {"ad_id": "120250039448030593", "date": "2026-08-13", "spend": 0.06, "impr": 2.0, "clicks": 0.0, "leads": 0.0, "reach": 2.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039448040593", "date": "2026-08-13", "spend": 0.85, "impr": 13.0, "clicks": 0.0, "leads": 0.0, "reach": 13.0, "eng": 3.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039448050593", "date": "2026-08-13", "spend": 23.82, "impr": 268.0, "clicks": 4.0, "leads": 0.0, "reach": 257.0, "eng": 69.0, "reactions": 3.0, "comments": 0.0, "shares": 0.0, "linkclicks": 3.0}, {"ad_id": "120250039526540593", "date": "2026-08-13", "spend": 2.18, "impr": 13.0, "clicks": 0.0, "leads": 0.0, "reach": 13.0, "eng": 3.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039526560593", "date": "2026-08-13", "spend": 3.15, "impr": 107.0, "clicks": 2.0, "leads": 0.0, "reach": 96.0, "eng": 3.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 2.0}, {"ad_id": "120250039567510593", "date": "2026-08-13", "spend": 0.04, "impr": 1.0, "clicks": 0.0, "leads": 0.0, "reach": 1.0, "eng": 1.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039588390593", "date": "2026-08-13", "spend": 0.96, "impr": 2.0, "clicks": 0.0, "leads": 0.0, "reach": 2.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250038466560593", "date": "2026-08-14", "spend": 18.9, "impr": 392.0, "clicks": 7.0, "leads": 2.0, "reach": 354.0, "eng": 6.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 6.0}, {"ad_id": "120250039265000593", "date": "2026-08-14", "spend": 25.67, "impr": 868.0, "clicks": 10.0, "leads": 0.0, "reach": 770.0, "eng": 17.0, "reactions": 7.0, "comments": 0.0, "shares": 0.0, "linkclicks": 8.0}, {"ad_id": "120250039366260593", "date": "2026-08-14", "spend": 22.47, "impr": 985.0, "clicks": 13.0, "leads": 0.0, "reach": 791.0, "eng": 13.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 11.0}, {"ad_id": "120250039448030593", "date": "2026-08-14", "spend": 0.81, "impr": 26.0, "clicks": 0.0, "leads": 0.0, "reach": 24.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039448040593", "date": "2026-08-14", "spend": 38.97, "impr": 369.0, "clicks": 7.0, "leads": 1.0, "reach": 347.0, "eng": 152.0, "reactions": 6.0, "comments": 0.0, "shares": 0.0, "linkclicks": 3.0}, {"ad_id": "120250039448050593", "date": "2026-08-14", "spend": 21.07, "impr": 368.0, "clicks": 8.0, "leads": 1.0, "reach": 346.0, "eng": 104.0, "reactions": 3.0, "comments": 0.0, "shares": 0.0, "linkclicks": 5.0}, {"ad_id": "120250039526540593", "date": "2026-08-14", "spend": 14.25, "impr": 90.0, "clicks": 2.0, "leads": 0.0, "reach": 86.0, "eng": 24.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 2.0}, {"ad_id": "120250039526560593", "date": "2026-08-14", "spend": 2.73, "impr": 86.0, "clicks": 2.0, "leads": 0.0, "reach": 81.0, "eng": 2.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 1.0}, {"ad_id": "120250039555970593", "date": "2026-08-14", "spend": 0.5, "impr": 9.0, "clicks": 1.0, "leads": 0.0, "reach": 7.0, "eng": 1.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 1.0}, {"ad_id": "120250039555980593", "date": "2026-08-14", "spend": 2.09, "impr": 15.0, "clicks": 0.0, "leads": 0.0, "reach": 15.0, "eng": 7.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039567510593", "date": "2026-08-14", "spend": 42.4, "impr": 500.0, "clicks": 16.0, "leads": 1.0, "reach": 456.0, "eng": 223.0, "reactions": 15.0, "comments": 0.0, "shares": 0.0, "linkclicks": 9.0}, {"ad_id": "120250039588390593", "date": "2026-08-14", "spend": 6.85, "impr": 75.0, "clicks": 8.0, "leads": 1.0, "reach": 67.0, "eng": 28.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 4.0}, {"ad_id": "120250038466560593", "date": "2026-08-15", "spend": 17.36, "impr": 572.0, "clicks": 8.0, "leads": 0.0, "reach": 516.0, "eng": 8.0, "reactions": 2.0, "comments": 0.0, "shares": 0.0, "linkclicks": 6.0}, {"ad_id": "120250039265000593", "date": "2026-08-15", "spend": 47.43, "impr": 1891.0, "clicks": 24.0, "leads": 3.0, "reach": 1588.0, "eng": 21.0, "reactions": 4.0, "comments": 0.0, "shares": 0.0, "linkclicks": 17.0}, {"ad_id": "120250039366260593", "date": "2026-08-15", "spend": 23.82, "impr": 1621.0, "clicks": 13.0, "leads": 0.0, "reach": 1292.0, "eng": 10.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 9.0}, {"ad_id": "120250039448040593", "date": "2026-08-15", "spend": 42.71, "impr": 768.0, "clicks": 25.0, "leads": 0.0, "reach": 713.0, "eng": 279.0, "reactions": 9.0, "comments": 0.0, "shares": 0.0, "linkclicks": 13.0}, {"ad_id": "120250039448050593", "date": "2026-08-15", "spend": 0.4, "impr": 3.0, "clicks": 0.0, "leads": 0.0, "reach": 3.0, "eng": 3.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039526540593", "date": "2026-08-15", "spend": 0.11, "impr": 4.0, "clicks": 0.0, "leads": 0.0, "reach": 4.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039567510593", "date": "2026-08-15", "spend": 14.35, "impr": 235.0, "clicks": 7.0, "leads": 0.0, "reach": 230.0, "eng": 66.0, "reactions": 2.0, "comments": 0.0, "shares": 0.0, "linkclicks": 4.0}, {"ad_id": "120250038466560593", "date": "2026-08-16", "spend": 7.37, "impr": 201.0, "clicks": 5.0, "leads": 0.0, "reach": 194.0, "eng": 4.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 4.0}, {"ad_id": "120250039265000593", "date": "2026-08-16", "spend": 111.69, "impr": 4755.0, "clicks": 43.0, "leads": 0.0, "reach": 3941.0, "eng": 38.0, "reactions": 5.0, "comments": 0.0, "shares": 0.0, "linkclicks": 31.0}, {"ad_id": "120250039366260593", "date": "2026-08-16", "spend": 25.06, "impr": 2049.0, "clicks": 10.0, "leads": 0.0, "reach": 1721.0, "eng": 7.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 7.0}, {"ad_id": "120250039448030593", "date": "2026-08-16", "spend": 0.04, "impr": 3.0, "clicks": 0.0, "leads": 0.0, "reach": 3.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039448040593", "date": "2026-08-16", "spend": 93.48, "impr": 1785.0, "clicks": 60.0, "leads": 2.0, "reach": 1648.0, "eng": 603.0, "reactions": 26.0, "comments": 0.0, "shares": 0.0, "linkclicks": 34.0}, {"ad_id": "120250039448050593", "date": "2026-08-16", "spend": 33.91, "impr": 558.0, "clicks": 16.0, "leads": 1.0, "reach": 521.0, "eng": 172.0, "reactions": 3.0, "comments": 0.0, "shares": 0.0, "linkclicks": 10.0}, {"ad_id": "120250039526540593", "date": "2026-08-16", "spend": 12.63, "impr": 100.0, "clicks": 3.0, "leads": 0.0, "reach": 96.0, "eng": 41.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 2.0}, {"ad_id": "120250039526560593", "date": "2026-08-16", "spend": 0.63, "impr": 4.0, "clicks": 0.0, "leads": 0.0, "reach": 3.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039555980593", "date": "2026-08-16", "spend": 2.2, "impr": 27.0, "clicks": 0.0, "leads": 0.0, "reach": 26.0, "eng": 10.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039567510593", "date": "2026-08-16", "spend": 11.42, "impr": 250.0, "clicks": 7.0, "leads": 0.0, "reach": 239.0, "eng": 66.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 5.0}, {"ad_id": "120250039588390593", "date": "2026-08-16", "spend": 1.29, "impr": 21.0, "clicks": 0.0, "leads": 0.0, "reach": 20.0, "eng": 5.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250038466560593", "date": "2026-08-17", "spend": 0.43, "impr": 12.0, "clicks": 0.0, "leads": 0.0, "reach": 12.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039265000593", "date": "2026-08-17", "spend": 15.24, "impr": 322.0, "clicks": 6.0, "leads": 0.0, "reach": 279.0, "eng": 5.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 4.0}, {"ad_id": "120250039366260593", "date": "2026-08-17", "spend": 2.16, "impr": 196.0, "clicks": 1.0, "leads": 0.0, "reach": 134.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039448040593", "date": "2026-08-17", "spend": 23.92, "impr": 679.0, "clicks": 11.0, "leads": 0.0, "reach": 627.0, "eng": 205.0, "reactions": 4.0, "comments": 0.0, "shares": 0.0, "linkclicks": 11.0}, {"ad_id": "120250039448050593", "date": "2026-08-17", "spend": 2.31, "impr": 34.0, "clicks": 0.0, "leads": 0.0, "reach": 34.0, "eng": 14.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039526540593", "date": "2026-08-17", "spend": 0.33, "impr": 9.0, "clicks": 0.0, "leads": 0.0, "reach": 8.0, "eng": 4.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039555980593", "date": "2026-08-17", "spend": 0.0, "impr": 1.0, "clicks": 0.0, "leads": 0.0, "reach": 1.0, "eng": 0.0, "reactions": 0.0, "comments": 0.0, "shares": 0.0, "linkclicks": 0.0}, {"ad_id": "120250039567510593", "date": "2026-08-17", "spend": 6.67, "impr": 145.0, "clicks": 2.0, "leads": 0.0, "reach": 141.0, "eng": 43.0, "reactions": 1.0, "comments": 0.0, "shares": 0.0, "linkclicks": 2.0}];
+const GA_ADS = {"796787502899": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] Campanha de pesquisa", "ad_group": "Segmentação | Qualificação | Temperatura de Lead", "ad_type": "RESPONSIVE_SEARCH_AD", "headlines": "Apartamento em Águas Claras | Lançamento em Águas Claras | Arboreto em Águas Claras | Alto Padrão em Águas Claras | Lançamento Frente ao Parque | 4 Suítes de Alto Padrão | Lazer Completo Premium | 3 Suítes de Alto Padrão | Lançamento Arboreto | Arboreto Mirante | Mirante Empreendimentos", "descriptions": "Apartamentos exclusivos com vista para o parque. Alto padrão e lazer completo. | 4 suítes, vista eterna para o parque e localização privilegiada em Águas Claras. | Projeto premium do Mirante. Agende sua visita e conheça o Arboreto."}, "816081541376": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] Campanha de pesquisa", "ad_group": "Marca | Arboreto e Mirante", "ad_type": "RESPONSIVE_SEARCH_AD", "headlines": "Apartamento em Águas Claras | Lançamento em Águas Claras | Arboreto em Águas Claras | Alto Padrão em Águas Claras | Lançamento Frente ao Parque | 4 Suítes de Alto Padrão | Lazer Completo Premium | 3 Suítes de Alto Padrão | Lançamento Arboreto | Arboreto Mirante | Mirante Empreendimentos | Apartamentos De Alto Padrão", "descriptions": "Apartamentos exclusivos com vista para o parque. Alto padrão e lazer completo. | 4 suítes, vista eterna para o parque e localização privilegiada em Águas Claras. | Projeto premium do Mirante. Agende sua visita e conheça o Arboreto."}, "816082243589": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] Campanha de pesquisa", "ad_group": "Segmentação | Alto Padrão", "ad_type": "RESPONSIVE_SEARCH_AD", "headlines": "Apartamento em Águas Claras | Lançamento em Águas Claras | Arboreto em Águas Claras | Alto Padrão em Águas Claras | Lançamento Frente ao Parque | 4 Suítes de Alto Padrão | Lazer Completo Premium | 3 Suítes de Alto Padrão | Lançamento Arboreto | Arboreto Mirante | Mirante Empreendimentos", "descriptions": "Apartamentos exclusivos com vista para o parque. Alto padrão e lazer completo. | 4 suítes, vista eterna para o parque e localização privilegiada em Águas Claras. | Projeto premium do Mirante. Agende sua visita e conheça o Arboreto."}, "816009732193": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] Campanha de pesquisa", "ad_group": "Segmentação | Investimento Premium e Exclusividade", "ad_type": "RESPONSIVE_SEARCH_AD", "headlines": "Apartamento em Águas Claras | Lançamento em Águas Claras | Arboreto em Águas Claras | Alto Padrão em Águas Claras | Lançamento Frente ao Parque | 4 Suítes de Alto Padrão | Lazer Completo Premium | 3 Suítes de Alto Padrão | Lançamento Arboreto | Arboreto Mirante | Mirante Empreendimentos | Apartamentos De Alto Padrão", "descriptions": "Apartamentos exclusivos com vista para o parque. Alto padrão e lazer completo. | 4 suítes, vista eterna para o parque e localização privilegiada em Águas Claras. | Projeto premium do Mirante. Agende sua visita e conheça o Arboreto."}, "816082478087": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] Campanha de pesquisa", "ad_group": "Segmentação | Lançamentos Premium", "ad_type": "RESPONSIVE_SEARCH_AD", "headlines": "Apartamento em Águas Claras | Lançamento em Águas Claras | Arboreto em Águas Claras | Alto Padrão em Águas Claras | Lançamento Frente ao Parque | 4 Suítes de Alto Padrão | Lazer Completo Premium | 3 Suítes de Alto Padrão | Lançamento Arboreto | Arboreto Mirante | Mirante Empreendimentos | Apartamentos De Alto Padrão", "descriptions": "Apartamentos exclusivos com vista para o parque. Alto padrão e lazer completo. | 4 suítes, vista eterna para o parque e localização privilegiada em Águas Claras. | Projeto premium do Mirante. Agende sua visita e conheça o Arboreto."}, "815974767555": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] Campanha de pesquisa", "ad_group": "Segmentação | Exclusividade e Welness", "ad_type": "RESPONSIVE_SEARCH_AD", "headlines": "Apartamento em Águas Claras | Lançamento em Águas Claras | Arboreto em Águas Claras | Alto Padrão em Águas Claras | Lançamento Frente ao Parque | 4 Suítes de Alto Padrão | Lazer Completo Premium | 3 Suítes de Alto Padrão | Lançamento Arboreto | Arboreto Mirante | Mirante Empreendimentos | Apartamentos De Alto Padrão", "descriptions": "Apartamentos exclusivos com vista para o parque. Alto padrão e lazer completo. | 4 suítes, vista eterna para o parque e localização privilegiada em Águas Claras. | Projeto premium do Mirante. Agende sua visita e conheça o Arboreto."}, "820850251357": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] - Campanha de vídeo", "ad_group": "A - Interesses em imóveis, apartamento + comportamentos de luxo", "ad_type": "VIDEO_RESPONSIVE_AD", "headlines": null, "descriptions": null}, "820923248816": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] - Campanha de vídeo", "ad_group": "A - Interesses em imóveis, apartamento + comportamentos de luxo", "ad_type": "VIDEO_RESPONSIVE_AD", "headlines": null, "descriptions": null}, "820850348608": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] - Campanha de vídeo", "ad_group": "A - Interesses em imóveis, apartamento + comportamentos de luxo", "ad_type": "VIDEO_RESPONSIVE_AD", "headlines": null, "descriptions": null}};
+const GA_DAILY = [{"ad_id": "796787502899", "date": "2026-08-12", "spend": 20.7545, "impr": 233.0, "clicks": 10.0, "conv": 4.0, "inter": 10.0}, {"ad_id": "816081541376", "date": "2026-08-12", "spend": 2.1424, "impr": 7.0, "clicks": 2.0, "conv": 0.0, "inter": 2.0}, {"ad_id": "816082243589", "date": "2026-08-12", "spend": 1.29, "impr": 41.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816009732193", "date": "2026-08-12", "spend": 0.0, "impr": 24.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "816082478087", "date": "2026-08-12", "spend": 3.9297, "impr": 53.0, "clicks": 3.0, "conv": 0.0, "inter": 3.0}, {"ad_id": "815974767555", "date": "2026-08-12", "spend": 9.72, "impr": 11.0, "clicks": 2.0, "conv": 0.0, "inter": 2.0}, {"ad_id": "796787502899", "date": "2026-08-13", "spend": 46.923, "impr": 362.0, "clicks": 16.0, "conv": 0.0, "inter": 16.0}, {"ad_id": "816081541376", "date": "2026-08-13", "spend": 1.24, "impr": 11.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816082243589", "date": "2026-08-13", "spend": 2.4, "impr": 53.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816009732193", "date": "2026-08-13", "spend": 2.66, "impr": 10.0, "clicks": 2.0, "conv": 0.0, "inter": 2.0}, {"ad_id": "820850251357", "date": "2026-08-13", "spend": 0.0, "impr": 4.0, "clicks": 0.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "820923248816", "date": "2026-08-13", "spend": 0.0, "impr": 1.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "816082478087", "date": "2026-08-13", "spend": 6.38, "impr": 54.0, "clicks": 3.0, "conv": 0.0, "inter": 3.0}, {"ad_id": "815974767555", "date": "2026-08-13", "spend": 2.92, "impr": 12.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "796787502899", "date": "2026-08-14", "spend": 42.5753, "impr": 180.0, "clicks": 14.0, "conv": 0.0, "inter": 14.0}, {"ad_id": "816081541376", "date": "2026-08-14", "spend": 1.25, "impr": 7.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816082243589", "date": "2026-08-14", "spend": 1.79, "impr": 26.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816009732193", "date": "2026-08-14", "spend": 3.2, "impr": 17.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816082478087", "date": "2026-08-14", "spend": 0.0, "impr": 30.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "815974767555", "date": "2026-08-14", "spend": 0.0, "impr": 5.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "820850251357", "date": "2026-08-14", "spend": 10.8665, "impr": 163.0, "clicks": 4.0, "conv": 0.0, "inter": 58.0}, {"ad_id": "820850348608", "date": "2026-08-14", "spend": 4.3708, "impr": 138.0, "clicks": 4.0, "conv": 0.0, "inter": 49.0}, {"ad_id": "820923248816", "date": "2026-08-14", "spend": 17.8164, "impr": 558.0, "clicks": 3.0, "conv": 0.0, "inter": 210.0}, {"ad_id": "796787502899", "date": "2026-08-15", "spend": 34.14, "impr": 191.0, "clicks": 13.0, "conv": 1.0, "inter": 13.0}, {"ad_id": "816081541376", "date": "2026-08-15", "spend": 0.34, "impr": 3.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816082243589", "date": "2026-08-15", "spend": 9.44, "impr": 30.0, "clicks": 4.0, "conv": 0.0, "inter": 4.0}, {"ad_id": "816009732193", "date": "2026-08-15", "spend": 0.0, "impr": 9.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "816082478087", "date": "2026-08-15", "spend": 7.75, "impr": 26.0, "clicks": 4.0, "conv": 1.0, "inter": 4.0}, {"ad_id": "815974767555", "date": "2026-08-15", "spend": 0.0, "impr": 3.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "820850251357", "date": "2026-08-15", "spend": 9.8567, "impr": 542.0, "clicks": 8.0, "conv": 0.0, "inter": 243.0}, {"ad_id": "820850348608", "date": "2026-08-15", "spend": 5.113, "impr": 283.0, "clicks": 6.0, "conv": 0.0, "inter": 115.0}, {"ad_id": "820923248816", "date": "2026-08-15", "spend": 17.2084, "impr": 1010.0, "clicks": 6.0, "conv": 0.0, "inter": 429.0}, {"ad_id": "796787502899", "date": "2026-08-16", "spend": 30.2692, "impr": 185.0, "clicks": 8.0, "conv": 0.0, "inter": 8.0}, {"ad_id": "816081541376", "date": "2026-08-16", "spend": 0.41, "impr": 3.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816082243589", "date": "2026-08-16", "spend": 12.1, "impr": 32.0, "clicks": 5.0, "conv": 1.0, "inter": 5.0}, {"ad_id": "816009732193", "date": "2026-08-16", "spend": 0.0, "impr": 10.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "816082478087", "date": "2026-08-16", "spend": 10.4426, "impr": 56.0, "clicks": 4.0, "conv": 0.0, "inter": 4.0}, {"ad_id": "815974767555", "date": "2026-08-16", "spend": 0.57, "impr": 8.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "820850251357", "date": "2026-08-16", "spend": 7.2866, "impr": 417.0, "clicks": 5.0, "conv": 0.0, "inter": 177.0}, {"ad_id": "820850348608", "date": "2026-08-16", "spend": 8.5336, "impr": 398.0, "clicks": 1.0, "conv": 0.0, "inter": 197.0}, {"ad_id": "820923248816", "date": "2026-08-16", "spend": 17.2118, "impr": 920.0, "clicks": 17.0, "conv": 0.0, "inter": 402.0}, {"ad_id": "796787502899", "date": "2026-08-17", "spend": 14.78, "impr": 49.0, "clicks": 5.0, "conv": 0.0, "inter": 5.0}, {"ad_id": "816081541376", "date": "2026-08-17", "spend": 0.0, "impr": 3.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "816082243589", "date": "2026-08-17", "spend": 0.85, "impr": 7.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "816082478087", "date": "2026-08-17", "spend": 2.3, "impr": 7.0, "clicks": 1.0, "conv": 0.0, "inter": 1.0}, {"ad_id": "815974767555", "date": "2026-08-17", "spend": 0.0, "impr": 4.0, "clicks": 0.0, "conv": 0.0, "inter": 0.0}, {"ad_id": "820850251357", "date": "2026-08-17", "spend": 1.5064, "impr": 65.0, "clicks": 2.0, "conv": 0.0, "inter": 23.0}, {"ad_id": "820850348608", "date": "2026-08-17", "spend": 4.2502, "impr": 154.0, "clicks": 1.0, "conv": 0.0, "inter": 89.0}, {"ad_id": "820923248816", "date": "2026-08-17", "spend": 1.5702, "impr": 111.0, "clicks": 0.0, "conv": 0.0, "inter": 50.0}];
+const GV_ADS = {"820850251357": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] - Campanha de vídeo", "ad_group": "A - Interesses em imóveis, apartamento + comportamentos de luxo", "video_id": "hACGUZ9KMOI", "title": "Arboreto Mirante | Filme Oficial"}, "820923248816": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] - Campanha de vídeo", "ad_group": "A - Interesses em imóveis, apartamento + comportamentos de luxo", "video_id": "j-piukv1_Xw", "title": "Arboreto Mirante | Guilherme Takeda"}, "820850348608": {"brand": "Arboreto", "campaign": "[FD] [ARBORETO] - Campanha de vídeo", "ad_group": "A - Interesses em imóveis, apartamento + comportamentos de luxo", "video_id": "TVMqefJevEQ", "title": "Arboreto Mirante | Carol Nathair | Liê Arquitetas"}};
+const GV_DAILY = [{"ad_id": "820850251357", "date": "2026-08-13", "spend": 0.0, "impr": 4.0, "clicks": 0.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820923248816", "date": "2026-08-13", "spend": 0.0, "impr": 1.0, "clicks": 0.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850251357", "date": "2026-08-14", "spend": 10.8665, "impr": 163.0, "clicks": 4.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850348608", "date": "2026-08-14", "spend": 4.3708, "impr": 138.0, "clicks": 4.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820923248816", "date": "2026-08-14", "spend": 17.8164, "impr": 558.0, "clicks": 3.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850251357", "date": "2026-08-15", "spend": 9.8567, "impr": 542.0, "clicks": 8.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850348608", "date": "2026-08-15", "spend": 5.113, "impr": 283.0, "clicks": 6.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820923248816", "date": "2026-08-15", "spend": 17.2084, "impr": 1010.0, "clicks": 6.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850251357", "date": "2026-08-16", "spend": 7.2866, "impr": 417.0, "clicks": 5.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850348608", "date": "2026-08-16", "spend": 8.5336, "impr": 398.0, "clicks": 1.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820923248816", "date": "2026-08-16", "spend": 17.2118, "impr": 920.0, "clicks": 17.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850251357", "date": "2026-08-17", "spend": 1.5064, "impr": 65.0, "clicks": 2.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820850348608", "date": "2026-08-17", "spend": 4.2502, "impr": 154.0, "clicks": 1.0, "conv": 0.0, "views": 0.0, "q100": 0.0}, {"ad_id": "820923248816", "date": "2026-08-17", "spend": 1.5702, "impr": 111.0, "clicks": 0.0, "conv": 0.0, "views": 0.0, "q100": 0.0}];
+
+const PRODUCT = "Arboreto";
+const ACCENT = { "Arboreto": "#33402B" };
+const ACCENT_LIGHT = { "Arboreto": "#E2A57C" };
+const META_COLOR = "#4E6E7E";
+const GOOGLE_COLOR = "#A0793F";
+const DATA_MIN_DATE = "2026-08-12";
+const DATA_MAX_DATE = "2026-08-17";
+const PLAY_SVG = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+
+let activePlatformTab = "meta";
+let activeSection = "criativos";
+let activeGeralMedia = "todas";
+let rangeFrom = DATA_MIN_DATE;
+let rangeTo = DATA_MAX_DATE;
+
+function fmtBRL(v) { if (v == null || isNaN(v)) return "—"; return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }); }
+function fmtBRL2(v) { if (v == null || isNaN(v)) return "—"; return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 2 }); }
+function fmtNum(v) { if (v == null || isNaN(v)) return "—"; return Math.round(v).toLocaleString("pt-BR"); }
+function fmtNum1(v) { if (v == null || isNaN(v)) return "—"; return v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+function fmtPct(v) { if (v == null || isNaN(v)) return "—"; return v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%"; }
+function esc(s) { const d = document.createElement("div"); d.innerText = s == null ? "" : s; return d.innerHTML; }
+function fmtDateBR(iso) { const [y,m,d] = iso.split("-"); return d + "/" + m + "/" + y.slice(2); }
+function inRange(d) { return d >= rangeFrom && d <= rangeTo; }
+
+function filteredFbDaily() { return FB_DAILY.filter(r => inRange(r.date)); }
+function filteredGaDaily() { return GA_DAILY.filter(r => inRange(r.date)); }
+function filteredGvDaily() { return GV_DAILY.filter(r => inRange(r.date)); }
+
+function fbAggByAd() {
+  const map = {};
+  filteredFbDaily().forEach(r => {
+    if (!map[r.ad_id]) map[r.ad_id] = { spend: 0, impr: 0, clicks: 0, leads: 0, reach: 0, eng: 0, reactions: 0, linkclicks: 0 };
+    const m = map[r.ad_id];
+    m.spend += r.spend; m.impr += r.impr; m.clicks += r.clicks; m.leads += r.leads;
+    m.reach = Math.max(m.reach, r.reach || 0);
+    m.eng += r.eng; m.reactions += r.reactions; m.linkclicks += r.linkclicks;
+  });
+  return map;
+}
+function gaAggByAd() {
+  const map = {};
+  filteredGaDaily().forEach(r => {
+    if (!map[r.ad_id]) map[r.ad_id] = { spend: 0, impr: 0, clicks: 0, conv: 0, inter: 0 };
+    map[r.ad_id].spend += r.spend; map[r.ad_id].impr += r.impr; map[r.ad_id].clicks += r.clicks; map[r.ad_id].conv += r.conv; map[r.ad_id].inter += r.inter;
+  });
+  return map;
+}
+function gvAggByAd() {
+  const map = {};
+  filteredGvDaily().forEach(r => {
+    if (!map[r.ad_id]) map[r.ad_id] = { spend: 0, impr: 0, clicks: 0, conv: 0, views: 0 };
+    const m = map[r.ad_id];
+    m.spend += r.spend; m.impr += r.impr; m.clicks += r.clicks; m.conv += r.conv; m.views += r.views;
+  });
+  return map;
+}
+function topGvCreatives(limit) {
+  const agg = gvAggByAd();
+  let list = Object.keys(agg).map(aid => {
+    const meta = GV_ADS[aid]; if (!meta) return null;
+    const a = agg[aid];
+    return { ad_id: aid, campaign: meta.campaign, title: meta.title,
+      thumb: `https://img.youtube.com/vi/${meta.video_id}/hqdefault.jpg`,
+      link: `https://www.youtube.com/watch?v=${meta.video_id}`,
+      spend: a.spend, impr: a.impr, clicks: a.clicks, conv: a.conv,
+      ctr: a.impr > 0 ? (a.clicks / a.impr) * 100 : 0 };
+  }).filter(Boolean);
+  list = list.filter(c => c.spend >= 0);
+  list.sort((a, b) => b.impr - a.impr);
+  return list.slice(0, limit);
+}
+function fbTotals() {
+  const agg = fbAggByAd();
+  const t = { spend: 0, impr: 0, clicks: 0, leads: 0, reach: 0, eng: 0 };
+  Object.values(agg).forEach(a => { t.spend += a.spend; t.impr += a.impr; t.clicks += a.clicks; t.leads += a.leads; t.reach += a.reach; t.eng += a.eng; });
+  return t;
+}
+function gaTotals() {
+  const agg = gaAggByAd();
+  const t = { spend: 0, impr: 0, clicks: 0, conv: 0, inter: 0 };
+  Object.values(agg).forEach(a => { t.spend += a.spend; t.impr += a.impr; t.clicks += a.clicks; t.conv += a.conv; t.inter += a.inter; });
+  return t;
+}
+function reachTotalsForSelection() {
+  let impr = 0, reach = 0, eng = 0, reactions = 0, linkclicks = 0, clicks = 0;
+  filteredFbDaily().forEach(r => { impr += r.impr; eng += r.eng; reactions += r.reactions; linkclicks += r.linkclicks; clicks += r.clicks; });
+  const agg = fbAggByAd();
+  Object.values(agg).forEach(a => { reach += a.reach; });
+  const freq = reach > 0 ? impr / reach : null;
+  const engRate = impr > 0 ? (eng / impr) * 100 : 0;
+  return { impr, reach, eng, reactions, linkclicks, clicks, freq, engRate };
+}
+
+function fbCampaignGroups() {
+  const agg = fbAggByAd();
+  const camps = {};
+  Object.keys(agg).forEach(aid => {
+    const meta = FB_ADS[aid]; if (!meta) return;
+    const a = agg[aid];
+    if (!camps[meta.campaign]) camps[meta.campaign] = { name: meta.campaign, spend: 0, impr: 0, clicks: 0, leads: 0, subs: {} };
+    const c = camps[meta.campaign];
+    c.spend += a.spend; c.impr += a.impr; c.clicks += a.clicks; c.leads += a.leads;
+    if (!c.subs[meta.adset]) c.subs[meta.adset] = { name: meta.adset, spend: 0, impr: 0, clicks: 0, leads: 0 };
+    const s = c.subs[meta.adset];
+    s.spend += a.spend; s.impr += a.impr; s.clicks += a.clicks; s.leads += a.leads;
+  });
+  return Object.values(camps).filter(c => c.spend > 0 || c.impr > 0)
+    .map(c => ({ ...c, subs: Object.values(c.subs).filter(s => s.spend > 0 || s.impr > 0).sort((a,b) => b.spend - a.spend) }))
+    .sort((a, b) => b.spend - a.spend);
+}
+function gaCampaignGroups() {
+  const agg = gaAggByAd();
+  const camps = {};
+  Object.keys(agg).forEach(aid => {
+    const meta = GA_ADS[aid]; if (!meta) return;
+    const a = agg[aid];
+    if (!camps[meta.campaign]) camps[meta.campaign] = { name: meta.campaign, spend: 0, impr: 0, clicks: 0, leads: 0, subs: {} };
+    const c = camps[meta.campaign];
+    c.spend += a.spend; c.impr += a.impr; c.clicks += a.clicks; c.leads += a.conv;
+    if (!c.subs[meta.ad_group]) c.subs[meta.ad_group] = { name: meta.ad_group, spend: 0, impr: 0, clicks: 0, leads: 0 };
+    const s = c.subs[meta.ad_group];
+    s.spend += a.spend; s.impr += a.impr; s.clicks += a.clicks; s.leads += a.conv;
+  });
+  return Object.values(camps).filter(c => c.spend > 0 || c.impr > 0)
+    .map(c => ({ ...c, subs: Object.values(c.subs).filter(s => s.spend > 0 || s.impr > 0).sort((a,b) => b.spend - a.spend) }))
+    .sort((a, b) => b.spend - a.spend);
+}
+function campMetricsHtml(g, resultLabel) {
+  const ctr = g.impr > 0 ? (g.clicks / g.impr) * 100 : 0;
+  const cpl = g.leads > 0 ? g.spend / g.leads : null;
+  return `<div class="camp-metrics">
+    <div><div class="cm-val">${fmtBRL(g.spend)}</div><div class="cm-label">invest.</div></div>
+    <div><div class="cm-val">${fmtNum(g.impr)}</div><div class="cm-label">impr.</div></div>
+    <div><div class="cm-val">${fmtNum(g.clicks)}</div><div class="cm-label">cliques</div></div>
+    <div><div class="cm-val">${fmtPct(ctr)}</div><div class="cm-label">ctr</div></div>
+    <div><div class="cm-val">${fmtNum(g.leads)}</div><div class="cm-label">${resultLabel}</div></div>
+    <div><div class="cm-val">${cpl ? fmtBRL2(cpl) : "—"}</div><div class="cm-label">cpl</div></div>
+  </div>`;
+}
+function renderCampaignGroups(groups, resultLabel) {
+  if (!groups.length) return '<div class="empty-msg">Sem campanhas nesse período.</div>';
+  return groups.map((g, i) => `
+    <div class="camp-card" id="camp_${i}">
+      <div class="camp-header" onclick="document.getElementById('camp_${i}').classList.toggle('open')">
+        <span class="camp-chevron"></span>
+        <span class="camp-name" title="${esc(g.name)}">${esc(g.name)}</span>
+        <span class="camp-count">${g.subs.length} conjunto${g.subs.length === 1 ? "" : "s"}</span>
+        ${campMetricsHtml(g, resultLabel)}
+      </div>
+      <div class="camp-subrows">
+        ${g.subs.map(s => `
+          <div class="camp-subrow">
+            <span class="camp-subrow-name" title="${esc(s.name)}">${esc(s.name)}</span>
+            ${campMetricsHtml(s, resultLabel)}
+          </div>`).join("")}
+      </div>
+    </div>`).join("");
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = `<span class="tab-btn active" style="cursor:default">${PRODUCT}</span>`;
+}
+function kpiCard(label, value, sub) { return `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub}</div></div>`; }
+function renderKpis() {
+  const fb = fbTotals(), ga = gaTotals();
+  const includeFb = activeGeralMedia === "todas" || activeGeralMedia === "meta";
+  const includeGa = activeGeralMedia === "todas" || activeGeralMedia === "google";
+  let spend = 0, leads = 0;
+  if (includeFb) { spend += fb.spend; leads += fb.leads; }
+  if (includeGa) { spend += ga.spend; leads += ga.conv; }
+  const cpl = leads > 0 ? spend / leads : null;
+  const mediaLabels = { todas: "Meta + Google", meta: "Meta Ads", google: "Google Ads" };
+  document.getElementById("kpiGrid").innerHTML =
+    kpiCard("Investimento total", fmtBRL(spend), mediaLabels[activeGeralMedia] + " · período selecionado") +
+    kpiCard("Leads / Conversões", fmtNum(leads), "Arboreto") +
+    kpiCard("CPL médio blended", fmtBRL2(cpl), "custo por lead no período") +
+    kpiCard("Dias no período", (Math.round((new Date(rangeTo) - new Date(rangeFrom)) / 86400000) + 1), fmtDateBR(rangeFrom) + " – " + fmtDateBR(rangeTo));
+}
+function reachCard(label, value, sub) { return `<div class="reach-card"><div class="reach-label">${label}</div><div class="reach-value">${value}</div><div class="reach-sub">${sub}</div></div>`; }
+function renderReach() {
+  const showReach = activeGeralMedia === "todas" || activeGeralMedia === "meta";
+  document.getElementById("reachTitle").style.display = showReach ? "" : "none";
+  document.getElementById("reachTitle").nextElementSibling.style.display = showReach ? "" : "none";
+  document.getElementById("reachGrid").style.display = showReach ? "" : "none";
+  if (!showReach) return;
+  const r = reachTotalsForSelection();
+  document.getElementById("reachGrid").innerHTML =
+    reachCard("Alcance", fmtNum(r.reach), "pessoas alcançadas (soma por anúncio)") +
+    reachCard("Impressões", fmtNum(r.impr), "exibições totais") +
+    reachCard("Frequência média", r.freq != null ? fmtNum1(r.freq) : "—", "impressões por pessoa") +
+    reachCard("Engajamento", fmtNum(r.eng), "curtidas + comentários + cliques") +
+    reachCard("Taxa de engajamento", fmtPct(r.engRate), "engajamento / impressões") +
+    reachCard("Cliques no link", fmtNum(r.linkclicks), "cliques que saíram do anúncio");
+}
+function platformCardHtml(platform, color, spend, secLabel, secVal, cpl, ctr, extra) {
+  return `<div class="platform-card"><div class="platform-head"><span class="dot" style="background:${color}"></span><span class="label">${platform}</span></div>
+    <div class="platform-spend">${fmtBRL(spend)}</div><div class="platform-spend-label">investido</div>
+    <div class="platform-metrics"><div><div class="m-val">${secVal}</div><div class="m-label">${secLabel}</div></div>
+    <div><div class="m-val">${cpl}</div><div class="m-label">CPL</div></div><div><div class="m-val">${ctr}</div><div class="m-label">CTR</div></div>
+    ${extra || ""}</div></div>`;
+}
+function renderBrandSections() {
+  const fb = fbTotals(), ga = gaTotals();
+  const container = document.getElementById("brandSections"); container.innerHTML = "";
+  const showMeta = activeGeralMedia === "todas" || activeGeralMedia === "meta";
+  const showGoogle = activeGeralMedia === "todas" || activeGeralMedia === "google";
+
+  const fbCtr = fb.impr > 0 ? (fb.clicks / fb.impr) * 100 : 0;
+  const fbCpl = fb.leads > 0 ? fb.spend / fb.leads : null;
+  const gaCtr = ga.impr > 0 ? (ga.clicks / ga.impr) * 100 : 0;
+  const gaCpl = ga.conv > 0 ? ga.spend / ga.conv : null;
+  const fbExtra = `<div><div class="m-val">${fmtNum(fb.reach)}</div><div class="m-label">alcance</div></div><div><div class="m-val">${fmtNum(fb.eng)}</div><div class="m-label">engajam.</div></div>`;
+  const gaExtra = `<div><div class="m-val">${fmtNum(ga.inter)}</div><div class="m-label">interações</div></div>`;
+  const section = document.createElement("div"); section.className = "brand-section";
+
+  const fbGroups = showMeta ? fbCampaignGroups() : [];
+  const gaGroups = showGoogle ? gaCampaignGroups() : [];
+
+  section.innerHTML = `
+    <div class="brand-title"><span class="dot" style="background:${ACCENT[PRODUCT]}"></span><h2>${PRODUCT}</h2></div>
+    <div class="platform-row">
+      ${showMeta ? platformCardHtml("Meta Ads", META_COLOR, fb.spend, "leads", fmtNum(fb.leads), fmtBRL2(fbCpl), fmtPct(fbCtr), fbExtra) : ""}
+      ${showGoogle ? platformCardHtml("Google Ads", GOOGLE_COLOR, ga.spend, "conversões", fmtNum(ga.conv), fmtBRL2(gaCpl), fmtPct(gaCtr), gaExtra) : ""}
+    </div>
+    ${showMeta ? `<div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; color:var(--muted2); text-transform:uppercase; margin-bottom:8px;">Campanhas → conjuntos de anúncios · Meta Ads</div>
+    <div style="margin-bottom:18px">${renderCampaignGroups(fbGroups, "leads")}</div>` : ""}
+    ${showGoogle ? `<div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; color:var(--muted2); text-transform:uppercase; margin-bottom:8px;">Campanhas → grupos de anúncios · Google Ads</div>
+    <div style="margin-bottom:18px">${renderCampaignGroups(gaGroups, "conv.")}</div>` : ""}
+  `;
+  container.appendChild(section);
+}
+function renderMetaCreatives() {
+  const agg = fbAggByAd();
+  let list = Object.keys(agg).map(aid => {
+    const meta = FB_ADS[aid]; if (!meta) return null;
+    const a = agg[aid];
+    return { ad_id: aid, campaign: meta.campaign, ad_name: meta.ad_name, thumb: meta.thumb, link: meta.link, is_video: meta.is_video,
+      spend: a.spend, impr: a.impr, clicks: a.clicks, leads: a.leads, reach: a.reach, eng: a.eng,
+      ctr: a.impr > 0 ? (a.clicks / a.impr) * 100 : 0, cpl: a.leads > 0 ? a.spend / a.leads : null };
+  }).filter(Boolean);
+  list = list.filter(c => c.spend > 0);
+  list.sort((a, b) => (b.leads - a.leads) || (b.eng - a.eng));
+  list = list.slice(0, 9);
+  if (!list.length) return '<div class="empty-msg">Nenhum criativo Meta com investimento nesse período.</div>';
+  return '<div class="creatives-grid">' + list.map((c, i) => `
+    <div class="creative-card">
+      <div class="creative-img-wrap">
+        ${c.thumb ? `<img src="${c.thumb}" alt="${esc(c.ad_name)}" loading="lazy">` : ""}
+        ${c.is_video ? `<span class="play-badge">${PLAY_SVG}</span>` : ""}
+        <span class="badge brand" style="border:1px solid ${ACCENT_LIGHT[PRODUCT]};color:${ACCENT_LIGHT[PRODUCT]}">${PRODUCT}</span>
+        <span class="badge rank">#${i + 1}</span>
+        ${c.link ? `<a class="origin-link" href="${c.link}" target="_blank" rel="noopener">Ver original ↗</a>` : ""}
+      </div>
+      <div class="creative-body">
+        <div class="creative-name" title="${esc(c.ad_name)}">${esc(c.ad_name)}</div>
+        <div class="creative-camp" title="${esc(c.campaign)}">${esc(c.campaign)}</div>
+        <div class="creative-stats">
+          <div><div class="cs-val" style="color:${ACCENT[PRODUCT]}">${fmtNum(c.leads)}</div><div class="cs-label">leads</div></div>
+          <div><div class="cs-val">${fmtBRL2(c.cpl)}</div><div class="cs-label">CPL</div></div>
+          <div><div class="cs-val">${fmtPct(c.ctr)}</div><div class="cs-label">CTR</div></div>
+          <div><div class="cs-val">${fmtNum(c.reach)}</div><div class="cs-label">alcance</div></div>
+          <div><div class="cs-val">${fmtNum(c.eng)}</div><div class="cs-label">engaj.</div></div>
+          <div><div class="cs-val">${fmtBRL(c.spend)}</div><div class="cs-label">gasto</div></div>
+        </div>
+      </div>
+    </div>`).join("") + '</div>';
+}
+function renderGoogleCreatives() {
+  const agg = gaAggByAd();
+  let list = Object.keys(agg).map(aid => {
+    const meta = GA_ADS[aid]; if (!meta) return null;
+    const a = agg[aid];
+    return { ad_id: aid, campaign: meta.campaign, ad_group: meta.ad_group, ad_type: meta.ad_type,
+      headlines: meta.headlines, descriptions: meta.descriptions,
+      spend: a.spend, impr: a.impr, clicks: a.clicks, conv: a.conv, inter: a.inter,
+      ctr: a.impr > 0 ? (a.clicks / a.impr) * 100 : 0, cpl: a.conv > 0 ? a.spend / a.conv : null };
+  }).filter(Boolean);
+  list = list.filter(c => c.spend >= 1 && c.headlines);
+  list.sort((a, b) => (b.conv - a.conv) || (b.ctr - a.ctr));
+  list = list.slice(0, 9);
+
+  const videos = topGvCreatives(6);
+  let videosHtml = "";
+  if (videos.length) {
+    videosHtml = `<div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; color:var(--muted2); text-transform:uppercase; margin-bottom:10px;">Vídeos no YouTube (Google Ads)</div>
+    <div class="creatives-grid" style="margin-bottom:26px">` + videos.map((c, i) => `
+      <div class="creative-card">
+        <div class="creative-img-wrap">
+          <img src="${c.thumb}" alt="${esc(c.title)}" loading="lazy">
+          <span class="play-badge">${PLAY_SVG}</span>
+          <span class="badge brand" style="border:1px solid ${ACCENT_LIGHT[PRODUCT]};color:${ACCENT_LIGHT[PRODUCT]}">${PRODUCT}</span>
+          <span class="badge rank">#${i + 1}</span>
+          <a class="origin-link" href="${c.link}" target="_blank" rel="noopener">Ver no YouTube ↗</a>
+        </div>
+        <div class="creative-body">
+          <div class="creative-name" title="${esc(c.title)}">${esc(c.title)}</div>
+          <div class="creative-camp" title="${esc(c.campaign)}">${esc(c.campaign)}</div>
+          <div class="creative-stats">
+            <div><div class="cs-val" style="color:${ACCENT[PRODUCT]}">${fmtNum(c.impr)}</div><div class="cs-label">impress.</div></div>
+            <div><div class="cs-val">${fmtPct(c.ctr)}</div><div class="cs-label">CTR</div></div>
+            <div><div class="cs-val">${fmtNum(c.clicks)}</div><div class="cs-label">cliques</div></div>
+            <div><div class="cs-val">${fmtBRL(c.spend)}</div><div class="cs-label">gasto</div></div>
+          </div>
+        </div>
+      </div>`).join("") + `</div>`;
+  }
+
+  if (!list.length && !videos.length) return '<div class="empty-msg">Nenhum criativo do Google com investimento nesse período.</div>';
+  const searchHtml = list.length
+    ? `<div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; color:var(--muted2); text-transform:uppercase; margin-bottom:10px;">Anúncios de Pesquisa (texto)</div><div class="creatives-grid">` + list.map((c, i) => {
+    const firstHeadlines = (c.headlines || "").split(" | ").slice(0, 2).join(" · ");
+    const firstDesc = (c.descriptions || "").split(" | ")[0] || "";
+    return `<div class="ga-creative-card">
+      <div class="ga-creative-top">
+        <span class="badge brand" style="position:static;border:1px solid ${ACCENT[PRODUCT]};color:${ACCENT[PRODUCT]}">${PRODUCT}</span>
+        <span class="mono" style="font-size:10px;color:var(--muted2)">#${i + 1} · Rede de Pesquisa</span>
+      </div>
+      <div class="ga-headline">${esc(firstHeadlines)}</div>
+      <div class="ga-desc">${esc(firstDesc)}</div>
+      <div class="ga-meta-row">${esc(c.campaign)}</div>
+      <div class="creative-stats">
+        <div><div class="cs-val" style="color:${ACCENT[PRODUCT]}">${fmtNum(c.conv)}</div><div class="cs-label">conv.</div></div>
+        <div><div class="cs-val">${fmtBRL2(c.cpl)}</div><div class="cs-label">CPL</div></div>
+        <div><div class="cs-val">${fmtPct(c.ctr)}</div><div class="cs-label">CTR</div></div>
+        <div><div class="cs-val">${fmtNum(c.inter)}</div><div class="cs-label">interaç.</div></div>
+        <div><div class="cs-val">${fmtBRL(c.spend)}</div><div class="cs-label">gasto</div></div>
+      </div>
+    </div>`;
+  }).join("") + '</div>'
+    : '<div class="empty-msg">Nenhum anúncio de pesquisa com dados de texto nesse período.</div>';
+
+  return videosHtml + searchHtml;
+}
+function renderCreatives() {
+  const subs = {
+    meta: "Meta Ads · ranqueados por leads gerados no período selecionado · clique em “Ver original” para abrir o anúncio real",
+    google: "Google Ads · vídeos do YouTube por impressões, e anúncios de pesquisa por conversões e CTR, no período selecionado",
+  };
+  document.getElementById("creativesSub").textContent = subs[activePlatformTab];
+  const renderers = { meta: renderMetaCreatives, google: renderGoogleCreatives };
+  document.getElementById("creativesContainer").innerHTML = renderers[activePlatformTab]();
+}
+function renderFilterBar() {
+  document.getElementById("dateFrom").value = rangeFrom;
+  document.getElementById("dateTo").value = rangeTo;
+  document.getElementById("rangeInfo").textContent = fmtDateBR(rangeFrom) + " – " + fmtDateBR(rangeTo);
+}
+function setPreset(preset) {
+  document.querySelectorAll(".preset-btn").forEach(b => b.classList.toggle("active", b.dataset.preset === preset));
+  const maxD = new Date(DATA_MAX_DATE);
+  if (preset === "all") { rangeFrom = DATA_MIN_DATE; rangeTo = DATA_MAX_DATE; }
+  else {
+    const days = parseInt(preset, 10);
+    const from = new Date(maxD); from.setDate(from.getDate() - (days - 1));
+    rangeFrom = from.toISOString().slice(0, 10); rangeTo = DATA_MAX_DATE;
+  }
+  renderFilterBar(); renderAll();
+}
+function initFilterBar() {
+  document.getElementById("dateFrom").min = DATA_MIN_DATE; document.getElementById("dateFrom").max = DATA_MAX_DATE;
+  document.getElementById("dateTo").min = DATA_MIN_DATE; document.getElementById("dateTo").max = DATA_MAX_DATE;
+  document.querySelectorAll(".preset-btn").forEach(btn => btn.addEventListener("click", () => setPreset(btn.dataset.preset)));
+  document.getElementById("dateFrom").addEventListener("change", e => {
+    rangeFrom = e.target.value || DATA_MIN_DATE;
+    if (rangeFrom > rangeTo) rangeTo = rangeFrom;
+    document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+    renderFilterBar(); renderAll();
+  });
+  document.getElementById("dateTo").addEventListener("change", e => {
+    rangeTo = e.target.value || DATA_MAX_DATE;
+    if (rangeTo < rangeFrom) rangeFrom = rangeTo;
+    document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+    renderFilterBar(); renderAll();
+  });
+  document.querySelectorAll(".subtab-btn[data-platform]").forEach(btn => btn.addEventListener("click", () => {
+    activePlatformTab = btn.dataset.platform;
+    document.querySelectorAll(".subtab-btn[data-platform]").forEach(b => b.classList.toggle("active", b === btn));
+    renderCreatives();
+  }));
+  document.querySelectorAll(".geral-media-btn").forEach(btn => btn.addEventListener("click", () => {
+    activeGeralMedia = btn.dataset.media;
+    document.querySelectorAll(".geral-media-btn").forEach(b => b.classList.toggle("active", b === btn));
+    renderKpis(); renderReach(); renderBrandSections();
+  }));
+  document.querySelectorAll(".section-nav-btn").forEach(btn => btn.addEventListener("click", () => {
+    activeSection = btn.dataset.section;
+    document.querySelectorAll(".section-nav-btn").forEach(b => b.classList.toggle("active", b === btn));
+    document.getElementById("sectionGeral").style.display = activeSection === "geral" ? "" : "none";
+    document.getElementById("sectionCriativos").style.display = activeSection === "criativos" ? "" : "none";
+  }));
+}
+function renderAll() {
+  renderTabs(); renderKpis(); renderReach(); renderBrandSections(); renderCreatives();
+  document.getElementById("footerNote").textContent = "Dados de " + fmtDateBR(DATA_MIN_DATE) + " a " + fmtDateBR(DATA_MAX_DATE) + " · campanha em fase de lançamento · peça uma atualização para puxar dados novos";
+}
+initFilterBar(); renderFilterBar(); renderAll();
+</script>
+</body>
+</html>
